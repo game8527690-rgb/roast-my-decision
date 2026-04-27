@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔥 Roast My Decision</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rubik:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fire: #FF4500;
+    --fire-bright: #FF6B35;
+    --smoke: #1a1a1a;
+    --ash: #2d2d2d;
+    --ember: #FFB347;
+    --white: #F5F0E8;
+    --muted: #888;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--smoke);
+    color: var(--white);
+    font-family: 'Rubik', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated fire bg */
+  body::before {
+    content: '';
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(ellipse at bottom, rgba(255,69,0,0.15) 0%, transparent 70%);
+    pointer-events: none;
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+    50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+  }
+
+  .header {
+    text-align: center;
+    padding: 3rem 1rem 1.5rem;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(3rem, 8vw, 6rem);
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, var(--fire) 0%, var(--ember) 50%, var(--fire-bright) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .tagline {
+    color: var(--muted);
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 1px;
+  }
+
+  .main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 4rem;
+  }
+
+  /* Input card */
+  .input-card {
+    background: var(--ash);
+    border: 1px solid rgba(255,69,0,0.3);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .input-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--fire), var(--ember), var(--fire));
+  }
+
+  .input-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--fire);
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .input-field {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    color: var(--white);
+    font-family: 'Rubik', sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    padding: 1rem 1.2rem;
+    resize: none;
+    min-height: 120px;
+    transition: border-color 0.2s;
+    direction: rtl;
+  }
+
+  .input-field::placeholder { color: rgba(255,255,255,0.25); }
+  .input-field:focus {
+    outline: none;
+    border-color: rgba(255,69,0,0.5);
+  }
+
+  .examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 1rem 0;
+  }
+
+  .example-pill {
+    background: rgba(255,69,0,0.1);
+    border: 1px solid rgba(255,69,0,0.25);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 0.78rem;
+    color: var(--fire-bright);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .example-pill:hover {
+    background: rgba(255,69,0,0.25);
+    border-color: var(--fire);
+  }
+
+  .roast-btn {
+    width: 100%;
+    padding: 1.1rem;
+    background: linear-gradient(135deg, var(--fire), var(--fire-bright));
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.6rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    margin-top: 1.2rem;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .roast-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+  .roast-btn:active { transform: scale(0.98); }
+  .roast-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* Loading */
+  .loading {
+    display: none;
+    text-align: center;
+    padding: 3rem;
+  }
+
+  .fire-loader {
+    font-size: 3rem;
+    animation: flicker 0.5s ease-in-out infinite alternate;
+  }
+
+  @keyframes flicker {
+    from { transform: scale(1) rotate(-3deg); }
+    to { transform: scale(1.2) rotate(3deg); }
+  }
+
+  .loading-text {
+    color: var(--muted);
+    margin-top: 1rem;
+    font-size: 0.9rem;
+  }
+
+  /* Results */
+  .results {
+    display: none;
+    animation: slideUp 0.5s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Score */
+  .score-card {
+    background: var(--ash);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .score-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .score-number {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 8rem;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--fire) 0%, var(--ember) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .score-out-of {
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .score-verdict {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2rem;
+    letter-spacing: 3px;
+    margin-top: 0.5rem;
+  }
+
+  .score-bar-wrapper {
+    background: rgba(255,255,255,0.08);
+    border-radius: 10px;
+    height: 10px;
+    margin: 1.2rem auto;
+    max-width: 400px;
+    overflow: hidden;
+  }
+
+  .score-bar {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #4CAF50, #FFC107, #FF4500);
+    background-size: 400px 100%;
+    width: 0;
+    transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Sections */
+  .section-card {
+    background: var(--ash);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 1.75rem;
+    margin-bottom: 1.25rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.2rem;
+  }
+
+  .section-icon {
+    font-size: 1.8rem;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    color: var(--white);
+  }
+
+  .section-body {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: rgba(245,240,232,0.85);
+  }
+
+  .section-card.roast-section {
+    border-color: rgba(255,69,0,0.3);
+    background: linear-gradient(135deg, #2d1a0e 0%, var(--ash) 100%);
+  }
+
+  .section-card.analysis-section {
+    border-color: rgba(71,171,255,0.2);
+    background: linear-gradient(135deg, #0a1a2d 0%, var(--ash) 100%);
+  }
+
+  .section-card.verdict-section {
+    border-color: rgba(255,179,71,0.3);
+    background: linear-gradient(135deg, #1a1200 0%, var(--ash) 100%);
+  }
+
+  /* Votes */
+  .vote-section {
+    background: var(--ash);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    text-align: center;
+  }
+
+  .vote-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.2rem;
+  }
+
+  .vote-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  .vote-btn {
+    flex: 1;
+    max-width: 200px;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: transparent;
+    color: var(--white);
+    font-family: 'Rubik', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .vote-btn:hover { transform: translateY(-2px); }
+  .vote-btn.genius:hover { background: rgba(76,175,80,0.15); border-color: #4CAF50; }
+  .vote-btn.idiot:hover { background: rgba(255,69,0,0.15); border-color: var(--fire); }
+  .vote-btn.voted { cursor: default; transform: none; }
+  .vote-btn.genius.voted { background: rgba(76,175,80,0.2); border-color: #4CAF50; }
+  .vote-btn.idiot.voted { background: rgba(255,69,0,0.2); border-color: var(--fire); }
+
+  .vote-emoji { font-size: 2rem; }
+  .vote-count { font-size: 1.3rem; font-weight: 700; }
+
+  /* Share */
+  .share-btn {
+    width: 100%;
+    padding: 0.9rem;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    color: var(--white);
+    font-family: 'Rubik', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 1rem;
+  }
+
+  .share-btn:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.3); }
+
+  .try-again-btn {
+    width: 100%;
+    padding: 0.9rem;
+    background: rgba(255,69,0,0.1);
+    border: 1px solid rgba(255,69,0,0.3);
+    border-radius: 12px;
+    color: var(--fire-bright);
+    font-family: 'Rubik', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .try-again-btn:hover { background: rgba(255,69,0,0.2); }
+
+  /* Error */
+  .error-msg {
+    display: none;
+    background: rgba(255,69,0,0.1);
+    border: 1px solid rgba(255,69,0,0.3);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    color: var(--fire-bright);
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    text-align: center;
+  }
+
+  .counter {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: left;
+    margin-top: 6px;
+  }
+
+  /* API Key input — hidden in production, key lives on server */
+  .api-key-bar { display: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">🔥 Roast My Decision</div>
+  <div class="tagline">גאון או אידיוט? בואו נגלה.</div>
+</div>
+
+<div class="main">
+
+  <!-- API Key bar -->
+  <div class="api-key-bar">
+    <label>🔑 Groq API Key:</label>
+    <input type="password" class="api-key-input" id="apiKeyInput" placeholder="gsk_..." />
+    <span class="api-key-hint">חינם לגמרי! קבל מפתח ב: <a href="https://console.groq.com/keys" target="_blank" style="color:var(--ember)">console.groq.com</a></span>
+  </div>
+
+  <div class="input-card" id="inputCard">
+    <span class="input-label">מה ההחלטה שלך?</span>
+    <textarea class="input-field" id="decisionInput" placeholder="ספר לנו על החלטה שקיבלת... גדולה, קטנה, מוזרה — הכל עובד." maxlength="500"></textarea>
+    <div class="counter"><span id="charCount">0</span>/500</div>
+
+    <div class="examples">
+      <span class="example-pill" onclick="setExample(this)">עזבתי עבודה יציבה לסטארטאפ</span>
+      <span class="example-pill" onclick="setExample(this)">קניתי קריפטו בשיא של 2021</span>
+      <span class="example-pill" onclick="setExample(this)">הסכמתי לגור עם חבר הכי טוב שלי</span>
+      <span class="example-pill" onclick="setExample(this)">לקחתי הלוואה לטיול סביב העולם</span>
+      <span class="example-pill" onclick="setExample(this)">נרשמתי ל-4 מועדוני ספורט ביום אחד</span>
+    </div>
+
+    <button class="roast-btn" id="roastBtn" onclick="roastMe()">🔥 תשרוף אותי</button>
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+
+  <div class="loading" id="loading">
+    <div class="fire-loader">🔥</div>
+    <div class="loading-text" id="loadingText">מנתח את ההחלטה הגאונית/מטופשת שלך...</div>
+  </div>
+
+  <div class="results" id="results">
+
+    <div class="score-card">
+      <div class="score-label">ציון טיפשות</div>
+      <div class="score-number" id="scoreNum">0</div>
+      <div class="score-out-of">/ 100</div>
+      <div class="score-bar-wrapper">
+        <div class="score-bar" id="scoreBar"></div>
+      </div>
+      <div class="score-verdict" id="scoreVerdict"></div>
+    </div>
+
+    <div class="section-card roast-section">
+      <div class="section-header">
+        <span class="section-icon">🎤</span>
+        <span class="section-title">הרואסט</span>
+      </div>
+      <div class="section-body" id="roastText"></div>
+    </div>
+
+    <div class="section-card analysis-section">
+      <div class="section-header">
+        <span class="section-icon">🧠</span>
+        <span class="section-title">ניתוח רציני</span>
+      </div>
+      <div class="section-body" id="analysisText"></div>
+    </div>
+
+    <div class="section-card verdict-section">
+      <div class="section-header">
+        <span class="section-icon">⚖️</span>
+        <span class="section-title">פסיקה סופית</span>
+      </div>
+      <div class="section-body" id="verdictText"></div>
+    </div>
+
+    <div class="vote-section">
+      <div class="vote-title">מה דעתך?</div>
+      <div class="vote-buttons">
+        <button class="vote-btn genius" id="geniusBtn" onclick="vote('genius')">
+          <span class="vote-emoji">🧠</span>
+          <span>גאון</span>
+          <span class="vote-count" id="geniusCount">47</span>
+        </button>
+        <button class="vote-btn idiot" id="idiotBtn" onclick="vote('idiot')">
+          <span class="vote-emoji">🤦</span>
+          <span>אידיוט</span>
+          <span class="vote-count" id="idiotCount">83</span>
+        </button>
+      </div>
+    </div>
+
+    <button class="share-btn" onclick="shareResult()">📤 שתף את התוצאה</button>
+    <button class="try-again-btn" onclick="resetForm()">🔄 החלטה נוספת</button>
+
+  </div>
+
+</div>
+
+<script>
+const LOADING_MESSAGES = [
+  "מנתח את ההחלטה הגאונית/מטופשת שלך...",
+  "מתייעץ עם 1,000 חכמים ו-1,000 טיפשים...",
+  "מחשב את רמת הנזק...",
+  "מכין את הרואסט המושלם..."
+];
+
+let loadingInterval;
+let hasVoted = false;
+
+document.getElementById('decisionInput').addEventListener('input', function() {
+  document.getElementById('charCount').textContent = this.value.length;
+});
+
+function setExample(el) {
+  document.getElementById('decisionInput').value = el.textContent;
+  document.getElementById('charCount').textContent = el.textContent.length;
+}
+
+async function roastMe() {
+  const decision = document.getElementById('decisionInput').value.trim();
+
+  if (!decision || decision.length < 10) {
+    showError('כתוב לפחות 10 תווים — תן לנו משהו לעבוד איתו 🔥');
+    return;
+  }
+
+  // Disable button to prevent double-click
+  const roastBtn = document.getElementById('roastBtn');
+  roastBtn.disabled = true;
+
+  document.getElementById('inputCard').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('errorMsg').style.display = 'none';
+
+  const loading = document.getElementById('loading');
+  loading.style.display = 'block';
+
+  let msgIdx = 0;
+  loadingInterval = setInterval(() => {
+    msgIdx = (msgIdx + 1) % LOADING_MESSAGES.length;
+    document.getElementById('loadingText').textContent = LOADING_MESSAGES[msgIdx];
+  }, 1800);
+
+  try {
+    const response = await fetch('/api/roast', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ decision })
+    });
+
+    const data = await response.json();
+    clearInterval(loadingInterval);
+
+    // Gemini error handling — error can be object or array
+    if (data.error) {
+      const errMsg = Array.isArray(data.error)
+        ? data.error.map(e => e.message || JSON.stringify(e)).join(' | ')
+        : (data.error.message || JSON.stringify(data.error));
+      throw new Error(errMsg);
+    }
+
+    // Parse Groq response (OpenAI-compatible format)
+    const text = data.choices?.[0]?.message?.content || '';
+    const clean = text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+
+    loading.style.display = 'none';
+    displayResults(parsed);
+    document.getElementById('roastBtn').disabled = false;
+
+  } catch (err) {
+    clearInterval(loadingInterval);
+    loading.style.display = 'none';
+    // Show input card again with error visible
+    document.getElementById('inputCard').style.display = 'block';
+    document.getElementById('roastBtn').disabled = false;
+    if (err.message && err.message.includes('Failed to fetch')) {
+      showError('שגיאת חיבור — ודא שהשרת רץ (node server.js) 🔥');
+    } else {
+      showError('שגיאה: ' + (err.message || 'משהו השתבש בדרך לאש 🔥'));
+    }
+  }
+}
+
+function displayResults(data) {
+  const score = Math.min(100, Math.max(0, data.score));
+
+  document.getElementById('scoreNum').textContent = score;
+  document.getElementById('scoreVerdict').textContent = data.verdict || '';
+  document.getElementById('roastText').textContent = data.roast || '';
+  document.getElementById('analysisText').textContent = data.analysis || '';
+  document.getElementById('verdictText').textContent = data.final || '';
+
+  // Score color
+  const verdictEl = document.getElementById('scoreVerdict');
+  if (score < 30) verdictEl.style.color = '#4CAF50';
+  else if (score < 60) verdictEl.style.color = '#FFC107';
+  else verdictEl.style.color = '#FF4500';
+
+  // Random votes
+  const base = Math.floor(Math.random() * 100) + 20;
+  document.getElementById('geniusCount').textContent = score < 50 ? base + Math.floor(Math.random() * 40) : base;
+  document.getElementById('idiotCount').textContent = score >= 50 ? base + Math.floor(Math.random() * 40) : base;
+  hasVoted = false;
+  document.getElementById('geniusBtn').classList.remove('voted');
+  document.getElementById('idiotBtn').classList.remove('voted');
+
+  const results = document.getElementById('results');
+  results.style.display = 'block';
+
+  // Animate score bar
+  setTimeout(() => {
+    document.getElementById('scoreBar').style.width = score + '%';
+  }, 300);
+
+  // Animate score number — always lands exactly on target
+  let current = 0;
+  const target = score;
+  const duration = 1200;
+  const startTime = performance.now();
+  const counter = setInterval(() => {
+    const elapsed = performance.now() - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    current = Math.round(progress * target);
+    document.getElementById('scoreNum').textContent = current;
+    if (progress >= 1) {
+      document.getElementById('scoreNum').textContent = target;
+      clearInterval(counter);
+    }
+  }, 30);
+
+  results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function vote(type) {
+  if (hasVoted) return;
+  hasVoted = true;
+  const btn = document.getElementById(type === 'genius' ? 'geniusBtn' : 'idiotBtn');
+  btn.classList.add('voted');
+  const countEl = document.getElementById(type === 'genius' ? 'geniusCount' : 'idiotCount');
+  countEl.textContent = parseInt(countEl.textContent) + 1;
+}
+
+function shareResult() {
+  const score = document.getElementById('scoreNum').textContent;
+  const verdict = document.getElementById('scoreVerdict').textContent;
+  const text = `🔥 הציון שלי ב-Roast My Decision: ${score}/100\n"${verdict}"\nרואסט ההחלטות שלך בחינם!`;
+  if (navigator.share) {
+    navigator.share({ title: 'Roast My Decision', text });
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(text);
+    alert('הועתק ללוח! 📋');
+  }
+}
+
+function resetForm() {
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('inputCard').style.display = 'block';
+  document.getElementById('roastBtn').disabled = false;
+  document.getElementById('decisionInput').value = '';
+  document.getElementById('charCount').textContent = '0';
+  document.getElementById('errorMsg').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 4000);
+}
+</script>
+</body>
+</html>
