@@ -132,6 +132,16 @@ Return exactly this structure:
     return;
   }
 
+  // Serve favicon
+  if (req.url === '/favicon.png') {
+    fs.readFile(path.join(__dirname, 'favicon.png'), (err, data) => {
+      if (err) { res.writeHead(404); res.end('Not found'); return; }
+      res.writeHead(200, { 'Content-Type': 'image/png' });
+      res.end(data);
+    });
+    return;
+  }
+
   // Serve HTML file
   if (req.url === '/' || req.url === '/index.html') {
     fs.readFile(path.join(__dirname, 'roast-my-decision.html'), (err, data) => {
